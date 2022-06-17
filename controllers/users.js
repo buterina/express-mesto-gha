@@ -31,16 +31,12 @@ const createUser = (req, res, next) => {
   return User.create({ name, about, avatar })
     .then((user) => {
       res.status(201).send({
-        data: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-        },
+        data: user,
       });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Check the information you provided'));
+        return next(new BadRequestError('The information you provided is not correct'));
       }
       return next(err);
     });
@@ -56,7 +52,7 @@ const updateUser = (req, res, next) => {
   })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Check the information you provided'));
+        return next(new BadRequestError('The information you provided is not correct'));
       }
       if (err.kind === 'ObjectId') {
         return next(new BadRequestError('Id is not correct'));
@@ -75,7 +71,7 @@ const updateAvatar = (req, res, next) => {
   })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Check the information you provided'));
+        return next(new BadRequestError('The information you provided is not correct'));
       }
       if (err.kind === 'ObjectId') {
         return next(new BadRequestError('Id is not correct'));
