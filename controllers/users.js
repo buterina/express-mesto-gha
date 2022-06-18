@@ -7,7 +7,7 @@ const getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('User not found');
+        throw new NotFoundError({ message: 'User not found' });
       }
       return res.status(200).send({
         data: {
@@ -19,7 +19,7 @@ const getUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        return next(new BadRequestError('Id is not correct'));
+        return next(new BadRequestError({ message: 'Id is not correct' }));
       }
       return next(err);
     });
@@ -36,7 +36,7 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('The information you provided is not correct'));
+        return next(new BadRequestError({ message: 'The information you provided is not correct' }));
       }
       return next(err);
     });
