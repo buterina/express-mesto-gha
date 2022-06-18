@@ -36,7 +36,8 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError({ message: 'The information you provided is not correct' }));
+        const errorMessage = Object.values(err.errors).map((error) => error.message).join(', ');
+        return next(new BadRequestError(`Validation error: ${errorMessage}`));
       }
       return next(err);
     });

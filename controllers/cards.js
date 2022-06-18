@@ -22,8 +22,9 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
+        const errorMessage = Object.values(err.errors).map((error) => error.message).join(', ');
         return next(
-          new BadRequestError('The information you provided is not correct'),
+          new BadRequestError(`Validation error: ${errorMessage}`),
         );
       }
       return next(err);
