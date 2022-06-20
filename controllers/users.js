@@ -43,7 +43,7 @@ const createUser = (req, res, next) => {
 
 const updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user.userId, { name, about }, { new: true }).then((user) => {
+  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true }).then((user) => {
     if (!user) {
       throw new NotFoundError('The user is not found');
     }
@@ -62,7 +62,7 @@ const updateUser = (req, res, next) => {
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user.userId, { avatar }).then((user) => {
+  User.findByIdAndUpdate(req.user._id, { avatar }).then((user) => {
     if (!user) {
       throw new NotFoundError('The user is not found');
     }
