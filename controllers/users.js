@@ -7,19 +7,13 @@ const getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError({ message: 'User not found' });
+        throw new NotFoundError('User not found');
       }
-      return res.status(200).send({
-        data: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-        },
-      });
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        return next(new BadRequestError({ message: 'Id is not correct' }));
+        return next(new BadRequestError('Id is not correct'));
       }
       return next(err);
     });
@@ -34,7 +28,9 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        const errorMessage = Object.values(err.errors).map((error) => error.message).join(', ');
+        const errorMessage = Object.values(err.errors)
+          .map((error) => error.message)
+          .join(', ');
         return next(new BadRequestError(`Validation error: ${errorMessage}`));
       }
       return next(err);
@@ -43,15 +39,28 @@ const createUser = (req, res, next) => {
 
 const updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true }).then((user) => {
-    if (!user) {
-      throw new NotFoundError('The user is not found');
-    }
-    return res.status(200).send({ data: user });
-  })
+  return User.findByIdAndUpdate(
+    req.user._id,
+    {
+      name,
+      about,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('The user is not found');
+      }
+      return res.status(200).send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('The information you provided is not correct'));
+        return next(
+          new BadRequestError('The information you provided is not correct'),
+        );
       }
       if (err.kind === 'ObjectId') {
         return next(new BadRequestError('Id is not correct'));
@@ -62,15 +71,27 @@ const updateUser = (req, res, next) => {
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }).then((user) => {
-    if (!user) {
-      throw new NotFoundError('The user is not found');
-    }
-    return res.status(200).send({ data: user });
-  })
+  User.findByIdAndUpdate(
+    req.user._id,
+    {
+      avatar,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('The user is not found');
+      }
+      return res.status(200).send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('The information you provided is not correct'));
+        return next(
+          new BadRequestError('The information you provided is not correct'),
+        );
       }
       if (err.kind === 'ObjectId') {
         return next(new BadRequestError('Id is not correct'));

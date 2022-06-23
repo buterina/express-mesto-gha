@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { userRouter } = require('./routes/users');
 const { cardRouter } = require('./routes/cards');
+const NotFoundError = require('./errors/NotFoundError');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -19,6 +20,17 @@ app.use(express.json());
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 
+app.use('*', (_, __, next) => next(new NotFoundError("This page doesn't exist")));
+
+app.use((err, _, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res.status(statusCode).send({
+    message: statusCode === 500 ? 'Server error' : message,
+  });
+  next();
+});
+
 app.listen(PORT, () => {
-  console.log('Server has been started');
+  console.log(`Server has been started on ${PORT}`);
 });

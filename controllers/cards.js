@@ -57,7 +57,7 @@ const likeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('The post is not found');
       }
-      return res.status(200).send({ message: 'The post has been liked' });
+      return res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
@@ -77,7 +77,7 @@ const dislikeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('The post is not found');
       }
-      return res.status(200).send({ message: 'The post has been unliked' });
+      return res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
