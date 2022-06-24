@@ -8,9 +8,7 @@ const getCards = (_, res, next) => {
     .then((cards) => {
       res.status(200).send({ data: cards });
     })
-    .catch(() => {
-      next(new ServerError('Server error'));
-    });
+    .catch(next);
 };
 
 const createCard = (req, res, next) => {
@@ -61,7 +59,7 @@ const likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        return next(new BadRequestError('The post is not found'));
+        return next(new BadRequestError('Id is not correct'));
       }
       return next(err);
     });
@@ -81,7 +79,7 @@ const dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        return next(new BadRequestError('The post is not found'));
+        return next(new BadRequestError('Id is not correct'));
       }
       return next(err);
     });

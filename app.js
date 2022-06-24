@@ -23,11 +23,8 @@ app.use('/cards', cardRouter);
 app.use('*', (_, __, next) => next(new NotFoundError("This page doesn't exist")));
 
 app.use((err, _, res, next) => {
-  const { statusCode = 500, message } = err;
-
-  res.status(statusCode).send({
-    message: statusCode === 500 ? 'Server error' : message,
-  });
+  const { statusCode = 500, message = 'Server error' } = err;
+  res.status(statusCode).send({ message });
   next();
 });
 

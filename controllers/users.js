@@ -105,9 +105,7 @@ const getUsers = (_, res, next) => {
     .then((users) => {
       res.status(200).send({ data: users });
     })
-    .catch(() => {
-      next(new ServerError('Server error'));
-    });
+    .catch(next);
 };
 
 module.exports = {
