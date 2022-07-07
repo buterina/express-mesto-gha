@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 const getCards = (_, res, next) => {
   Card.find({})
@@ -33,6 +34,9 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         throw new NotFoundError('The post is not found');
+      }
+      if (!card.owner.equals(req.user._id)) {
+        throw new ForbiddenError('You are not allowed to remove posts of other users');
       }
       return card.remove().then(() => res.send({ data: card }));
     })

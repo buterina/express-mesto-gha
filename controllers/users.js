@@ -4,6 +4,7 @@ const User = require('../models/user');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
+const ConflictError = require('../errors/ConflictError');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -58,9 +59,17 @@ const createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      res.status(201).send({ data: user });
+      res.status(201).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      });
     })
     .catch((err) => {
+      if (err.code === 11000) {
+        return next(new ConflictError('This email is already taken'));
+      }
       if (err.name === 'ValidationError') {
         const errorMessage = Object.values(err.errors)
           .map((error) => error.message)
