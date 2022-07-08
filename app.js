@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
+const helmet = require('helmet');
 const { errors, celebrate, Joi } = require('celebrate');
 const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
@@ -12,10 +14,7 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 app.use(express.json());
-
-app.use(auth);
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+app.use(helmet());
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -33,6 +32,10 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+
+app.use(auth);
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 app.use('*', (_, __, next) => next(new NotFoundError("This page doesn't exist")));
 

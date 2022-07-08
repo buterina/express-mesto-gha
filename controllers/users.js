@@ -6,12 +6,14 @@ const NotFoundError = require('../errors/NotFoundError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const ConflictError = require('../errors/ConflictError');
 
+const { JWT_SECRET = 'dev-key' } = process.env;
+
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '1d' });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '1d' });
       res.send({ token });
     })
     .catch(() => next(new UnauthorizedError('Incorrect email or password')));

@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator: (v) => validator.isURL(v),
       message: 'Incorrect URL format',
-    }
+    },
   },
   email: {
     type: String,
@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email })
     .select('+password')
